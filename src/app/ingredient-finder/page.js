@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import IngredientFinderForm from "../components/IngredientFinderForm/IngredientFinderForm";
 
 function page() {

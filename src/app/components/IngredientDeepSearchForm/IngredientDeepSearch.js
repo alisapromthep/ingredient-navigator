@@ -1,8 +1,11 @@
-"use client"; // This component needs client-side interactivity
+"use client";
 
 import { useState } from "react";
+import { usePerplexity } from "@/app/context/PerplexityContext";
 
-export default function IngredientDeepSearchForm({ onSubmitPrompt }) {
+export default function IngredientDeepSearchForm() {
+  const { submitPerplexityPrompt, loading } = usePerplexity();
+
   const [ingredientName, setIngredientName] = useState("");
   const [extraDetails, setExtraDetails] = useState("");
 
@@ -17,7 +20,7 @@ export default function IngredientDeepSearchForm({ onSubmitPrompt }) {
       prompt += ` Include its primary functions, benefits, typical usage concentrations, potential side effects, regulatory status (e.g., FDA, EU), and if available, key suppliers or trending applications.`;
     }
 
-    onSubmitPrompt(prompt); // Pass the constructed prompt to the parent component
+    submitPerplexityPrompt(prompt);
   };
 
   return (

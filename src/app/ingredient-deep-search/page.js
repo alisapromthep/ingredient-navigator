@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import IngredientDeepSearchForm from "../components/IngredientDeepSearchForm/IngredientDeepSearch";
 

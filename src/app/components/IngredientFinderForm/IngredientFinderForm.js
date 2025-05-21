@@ -1,8 +1,11 @@
 "use client"; // This component needs client-side interactivity
 
 import { useState } from "react";
+import { usePerplexity } from "@/app/context/PerplexityContext";
 
-export default function IngredientFinderForm({ onSubmitPrompt }) {
+export default function IngredientFinderForm() {
+  const { submitPerplexityPrompt, loading } = usePerplexity();
+
   const [productCategory, setProductCategory] = useState("");
   const [productType, setProductType] = useState("");
   const [productFunction, setProductFunction] = useState("");
@@ -29,7 +32,7 @@ export default function IngredientFinderForm({ onSubmitPrompt }) {
 
     prompt += ` Explain the function and benefits of each suggested ingredient.`;
 
-    onSubmitPrompt(prompt); // Pass the constructed prompt to the parent component
+    submitPerplexityPrompt(prompt); // Pass the constructed prompt to the parent component
   };
 
   return (
