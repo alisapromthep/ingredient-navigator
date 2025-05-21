@@ -57,7 +57,7 @@ export default function IngredientFinderForm() {
           value={productCategory}
           onChange={(e) => setProductCategory(e.target.value)}
           required
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+          className="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
         >
           <option value="">Select a category</option>
           <option value="hair">Hair</option>
@@ -81,7 +81,7 @@ export default function IngredientFinderForm() {
           value={productType}
           onChange={(e) => setProductType(e.target.value)}
           required
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+          className="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
         >
           <option value="">Select type</option>
           <option value="water-based">Water-based</option>
@@ -104,7 +104,7 @@ export default function IngredientFinderForm() {
           value={productFunction}
           onChange={(e) => setProductFunction(e.target.value)}
           placeholder="e.g., provide deep hydration"
-          className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
+          className="text-gray-700 mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
         />
       </div>
 
@@ -140,7 +140,7 @@ export default function IngredientFinderForm() {
           onChange={(e) => setNumIngredients(parseInt(e.target.value))}
           min="1"
           max="10"
-          className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
+          className="text-gray-700 mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
         />
       </div>
 

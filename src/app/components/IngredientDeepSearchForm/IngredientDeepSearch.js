@@ -47,7 +47,7 @@ export default function IngredientDeepSearchForm() {
           onChange={(e) => setIngredientName(e.target.value)}
           required
           placeholder="e.g., Hyaluronic Acid, Niacinamide"
-          className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
+          className="mt-1 block w-full text-gray-700 shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
         />
       </div>
 
@@ -65,7 +65,7 @@ export default function IngredientDeepSearchForm() {
           onChange={(e) => setExtraDetails(e.target.value)}
           rows="3"
           placeholder="e.g., 'its stability in emulsions and typical pH range', 'its interaction with Vitamin C', 'its sustainability aspects'"
-          className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
+          className="mt-1 block w-full text-gray-700 shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
         ></textarea>
         <p className="mt-1 text-xs text-gray-500">
           Provide specific details you want to know about the ingredient for a
