@@ -20,7 +20,7 @@ export default function IngredientDeepSearchForm() {
       prompt += ` Include its primary functions, benefits, typical usage concentrations, potential side effects, regulatory status (e.g., FDA, EU), and if available, key suppliers or trending applications.`;
     }
 
-    submitPerplexityPrompt(prompt);
+    submitPerplexityPrompt(prompt, "deepsearch");
   };
 
   return (

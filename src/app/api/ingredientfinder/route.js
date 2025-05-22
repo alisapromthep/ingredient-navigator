@@ -73,8 +73,6 @@ export async function POST(request) {
     Request: "${prompt}"
     `;
 
-    let ingredientsData; // This will hold the parsed JSON array of ingredients
-
     try {
       const completion = await openai.chat.completions.create({
         model: model,

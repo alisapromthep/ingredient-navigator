@@ -32,7 +32,7 @@ export default function IngredientFinderForm() {
 
     prompt += ` Explain the function and benefits of each suggested ingredient.`;
 
-    submitPerplexityPrompt(prompt); // Pass the constructed prompt to the parent component
+    submitPerplexityPrompt(prompt, "finder"); // Pass the constructed prompt to the parent component
   };
 
   return (
