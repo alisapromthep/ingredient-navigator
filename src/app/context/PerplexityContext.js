@@ -26,39 +26,43 @@ export function PerplexityProvider({ children }) {
       setAiResponse("");
       setSubmittedPrompt(prompt);
       console.log("prompt", prompt);
-      //   try {
-      //     const response = await fetch("/api/perplexity", {
-      //       method: "POST",
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //       },
-      //       body: JSON.stringify({ prompt }),
-      //     });
+      try {
+        const response = await fetch("/api/ingredientintel", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ prompt }),
+        });
 
-      //     if (!response.ok) {
-      //       const errorData = await response.json();
-      //       throw new Error(errorData.error || "Failed to get response from AI");
-      //     }
+        if (!response.ok) {
+          const errorData = await response.json(); // Still need to read error JSON
+          throw new Error(errorData.error || "Failed to get response from AI");
+        }
 
-      //     const data = await response.json();
-      //     setAiResponse(data.result);
+        const data = await response.json();
 
-      //     setSearchHistory((prevHistory) => [
-      //       {
-      //         id: Date.now(),
-      //         prompt: prompt,
-      //         response: data.result,
-      //         timestamp: new Date().toISOString(),
-      //         type: searchType,
-      //       },
-      //       ...prevHistory,
-      //     ]);
-      //   } catch (err) {
-      //     console.error("Perplexity API error:", err);
-      //     setError(err.message || "An unexpected error occurred.");
-      //   } finally {
-      //     setLoading(false);
-      //   }
+        console.log("Parsed API Response Data:", data); // Now you'll see your ingredients!
+
+        // Update context state with the parsed data
+        setAiResponse(data.ingredients);
+
+        setSearchHistory((prevHistory) => [
+          {
+            id: Date.now(),
+            prompt: prompt,
+            response: data.result,
+            timestamp: new Date().toISOString(),
+            type: searchType,
+          },
+          ...prevHistory,
+        ]);
+      } catch (err) {
+        console.error("Perplexity API error:", err);
+        setError(err.message || "An unexpected error occurred.");
+      } finally {
+        setLoading(false);
+      }
     },
     []
   );
