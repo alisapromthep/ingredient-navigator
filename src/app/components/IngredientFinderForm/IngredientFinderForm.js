@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { usePerplexity } from "@/app/context/PerplexityContext";
-
+import { useRouter } from "next/navigation";
 export default function IngredientFinderForm() {
-  const { submitPerplexityPrompt, loading } = usePerplexity();
+  const router = useRouter();
+
+  const { submitPerplexityPrompt, loading, error } = usePerplexity();
 
   const [productCategory, setProductCategory] = useState("");
   const [productType, setProductType] = useState("");
@@ -13,7 +15,7 @@ export default function IngredientFinderForm() {
   const [numIngredients, setNumIngredients] = useState(5);
   const [connectToMarketTrend, setConnectToMarketTrend] = useState(true); // Default to true for market focus
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     let prompt = `Suggest ${numIngredients} key ingredients for a ${productType} ${productCategory} product.`;
@@ -38,7 +40,13 @@ export default function IngredientFinderForm() {
 
     prompt += ` Explain the function and benefits of each suggested ingredient.`;
 
-    submitPerplexityPrompt(prompt, "finder"); // Pass the constructed prompt to the parent component
+    try {
+      await submitPerplexityPrompt(prompt, "finder");
+
+      router.push("/reports");
+    } catch (error) {
+      console.error("form submission error", error);
+    }
   };
 
   return (
@@ -169,10 +177,12 @@ export default function IngredientFinderForm() {
 
       <button
         type="submit"
-        className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        disabled={loading}
+        className="bg-blue-500 text-white p-2 rounded"
       >
-        Find Ingredients
+        {loading ? "Submitting..." : "Find Ingredients"}
       </button>
+      {error && <p className="text-red-500">{error}</p>}
     </form>
   );
 }

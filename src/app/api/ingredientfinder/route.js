@@ -106,7 +106,8 @@ export async function POST(request) {
 
     let ingredientsData; // This will hold the parsed JSON array of ingredients
     let primaryAiResponseText; // Will hold stringified ingredients data for the next prompt
-
+    let rawIngredients;
+    let rawActions;
     try {
       const completion1 = await openai.chat.completions.create({
         model: "sonar",
@@ -129,6 +130,7 @@ export async function POST(request) {
         contentString1
       );
 
+      rawIngredients = contentString1;
       ingredientsData = JSON.parse(contentString1);
 
       primaryAiResponseText = contentString1;
@@ -168,6 +170,7 @@ export async function POST(request) {
 
       const contentString2 = completion2.choices[0]?.message?.content;
       actionableSummaryJson = JSON.parse(contentString2);
+      rawActions = contentString2;
       //actionableSummaryJson = JSON.stringify(contentString2, null, 2);
       console.log(
         "Raw JSON response from Perplexity (Layer 2 - Summary):",
@@ -179,8 +182,8 @@ export async function POST(request) {
 
     // Return both the structured ingredient data and the actionable summary
     return NextResponse.json({
-      ingredients: ingredientsData, // Structured array of ingredient objects
-      actionableSummary: actionableSummaryJson, // Structured JSON object for summary
+      ingredients: ingredientsData || rawIngredients, // Structured array of ingredient objects
+      actionableSummary: actionableSummaryJson || rawActions, // Structured JSON object for summary
     });
   } catch (error) {
     console.error("Critical error in Perplexity API route:", error);

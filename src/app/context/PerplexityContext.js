@@ -25,7 +25,7 @@ export function PerplexityProvider({ children }) {
       setError(null);
       setAiResponse("");
       setSubmittedPrompt(prompt);
-      console.log("prompt", prompt);
+      //console.log("prompt", prompt);
       if (searchType === "finder") {
         try {
           const response = await fetch("/api/ingredientfinder", {
@@ -45,10 +45,10 @@ export function PerplexityProvider({ children }) {
 
           const data = await response.json();
 
-          console.log("Parsed API Response Data:", data); // Now you'll see your ingredients!
+          console.log("Parsed API Response Data:", data);
 
           // Update context state with the parsed data
-          setAiResponse(data.ingredients);
+          setAiResponse(data);
 
           setSearchHistory((prevHistory) => [
             {
