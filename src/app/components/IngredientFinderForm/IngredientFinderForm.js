@@ -27,7 +27,13 @@ export default function IngredientFinderForm() {
     }
 
     if (connectToMarketTrend) {
-      prompt += ` Also, ensure the suggested ingredients are currently trending or gaining popularity in the market.`;
+      prompt += `
+      Additionally, focus exclusively on ingredients that are demonstrably **gaining significant popularity or showing viral potential** across key social media platforms: **TikTok, Instagram, and YouTube**.
+      For each suggested ingredient, provide concrete evidence and analysis of its growth, including:
+      - **Engagement Metrics/Statistics:** (e.g., number of related hashtags, video views, mentions, or growth rate of content over the past 6-12 months specifically on TikTok, Instagram, and YouTube). If exact numbers aren't available, describe the observed trend (e.g., "rapid increase in user-generated content," "frequently featured by beauty influencers," "emerging as a key topic").
+      - **Trend Trajectory:** Explain *why* it's gaining popularity (e.g., efficacy, unique texture, celebrity endorsement, 'clean beauty' alignment).
+      - **Future Outlook (8-month window):** Predict its sustainability and potential for continued growth, ensuring it will still be on an upward trend when a product might launch in the next 8 months. Prioritize ingredients that offer a genuine "ahead of the curve" advantage.
+      `;
     }
 
     prompt += ` Explain the function and benefits of each suggested ingredient.`;
