@@ -15,16 +15,16 @@ Font.register({
   family: "Open Sans",
   fonts: [
     {
-      src: "https://fonts.gstatic.com/s/opensans/v18/mem8YaGs126MiZpBA-UFVZ0e.ttf",
+      src: "/fonts/OpenSans-Regular.ttf",
       fontWeight: 400,
     },
     {
-      src: "https://fonts.gstatic.com/s/opensans/v18/mem5YaGs126MiZpBA-UFVZgZwckv.ttf",
+      src: "/fonts/OpenSans-Bold.ttf",
       fontWeight: 700,
     },
   ],
 });
-// You can register more weights or styles as
+
 const createStyles = (colors) =>
   StyleSheet.create({
     page: {
