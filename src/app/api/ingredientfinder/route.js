@@ -33,22 +33,23 @@ export async function POST(request) {
         properties: {
           name: {
             type: "string",
-            description: "The common name of the ingredient.",
+            description:
+              "The common name of the ingredient (e.g., 'Hyaluronic Acid').",
           },
           function: {
             type: "string",
             description:
-              "The primary function or role of the ingredient in a cosmetic product.",
+              "The primary function or role (concise, 1-2 sentences).",
           },
           clinicalStudies: {
             type: "string",
             description:
-              "A summary of any relevant clinical studies or scientific evidence supporting its claims, or 'N/A' if none are readily available.",
+              "Summary of relevant clinical studies (max 2-3 key findings or 'N/A' if none readily available). Prioritize brevity.",
           },
           marketTrendAnalysis: {
             type: "string",
             description:
-              "An analysis of its current trend, popularity, and relevance in the beauty market.",
+              "Concise analysis of its current trend, popularity, and relevance on TikTok, Instagram, YouTube (1-2 sentences focusing on viral potential).",
           },
         },
         required: [
@@ -100,9 +101,10 @@ export async function POST(request) {
 
     // --- Layer 1: Get structured ingredient information (as JSON Array) ---
     const ingredientPrompt = `Based on the following request, identify key ingredients and provide their details. Your response MUST be a JSON array where each object strictly conforms to the provided JSON schema. Do NOT include any additional text or markdown outside the JSON.
+Each description should be as concise as possible while being informative. For 'clinicalStudies' provide only 2-3 key findings. For 'marketTrendAnalysis', provide a brief 1-2 sentence summary of its social media popularity on TikTok, Instagram, and YouTube.
 
-    Request: "${prompt}"
-    `;
+Request: "${prompt}"
+`;
 
     let ingredientsData; // This will hold the parsed JSON array of ingredients
     let primaryAiResponseText; // Will hold stringified ingredients data for the next prompt
@@ -129,11 +131,20 @@ export async function POST(request) {
         "Raw JSON response from Perplexity (Layer 1 - Ingredients):",
         contentString1
       );
+      //clean up raw strings before parsing to avoid errors of incomplete strings/objects.
+      let cleanedString1 = contentString1.trim();
+      if (cleanedString1.startsWith("```json")) {
+        cleanedString1 = cleanedString1.substring(7);
+      }
+      if (cleanedString1.endsWith("```")) {
+        cleanedString1 = cleanedString1.substring(0, cleanedString1.length - 3);
+      }
+      cleanedString1 = cleanedString1.trim();
+      ingredientsData = JSON.parse(cleanedString1);
 
-      rawIngredients = contentString1;
-      ingredientsData = JSON.parse(contentString1);
+      rawIngredients = cleanedString1;
 
-      primaryAiResponseText = contentString1;
+      primaryAiResponseText = cleanedString1;
     } catch (parseError) {
       console.error("Error in Layer 1 (Ingredient JSON Schema):", parseError);
       return NextResponse.json(
@@ -169,9 +180,24 @@ export async function POST(request) {
       });
 
       const contentString2 = completion2.choices[0]?.message?.content;
-      actionableSummaryJson = JSON.parse(contentString2);
-      rawActions = contentString2;
-      //actionableSummaryJson = JSON.stringify(contentString2, null, 2);
+
+      let cleanedString2 = contentString2.trim();
+      if (cleanedString2.startsWith("```json")) {
+        cleanedString2 = cleanedString2.substring(7);
+      } else if (cleanedString2.startsWith("```")) {
+        cleanedString2 = cleanedString2.substring(3);
+      }
+      if (cleanedString2.endsWith("```")) {
+        cleanedString2 = cleanedString2.substring(0, cleanedString2.length - 3);
+      }
+      cleanedString2 = cleanedString2.trim();
+
+      console.log("Cleaned string for Layer 2 parse:", cleanedString2);
+
+      // Parse the cleaned string
+      actionableSummaryJson = JSON.parse(cleanedString2);
+      rawActions = cleanedString2;
+
       console.log(
         "Raw JSON response from Perplexity (Layer 2 - Summary):",
         contentString2

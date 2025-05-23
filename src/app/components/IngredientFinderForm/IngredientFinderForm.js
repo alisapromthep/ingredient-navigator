@@ -153,7 +153,7 @@ export default function IngredientFinderForm() {
           value={numIngredients}
           onChange={(e) => setNumIngredients(parseInt(e.target.value))}
           min="1"
-          max="10"
+          max="5"
           className="text-gray-700 bg-white mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
         />
       </div>

@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useState, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useCallback,
+  useEffect,
+} from "react";
 
 const PerplexityContext = createContext(undefined);
 
@@ -18,6 +24,47 @@ export function PerplexityProvider({ children }) {
   const [aiResponse, setAiResponse] = useState("");
   const [submittedPrompt, setSubmittedPrompt] = useState("");
   const [searchHistory, setSearchHistory] = useState([]);
+  const [actionableSummary, setActionableSummary] = useState(null); // Keep separate for easier access
+
+  // --- useEffect to load data from localStorage on mount ---
+  useEffect(() => {
+    try {
+      const storedPrompt = localStorage.getItem("submittedPrompt");
+      const storedAiResponse = localStorage.getItem("aiResponse");
+      const storedActionableSummary = localStorage.getItem("actionableSummary");
+
+      if (storedPrompt) {
+        setSubmittedPrompt(JSON.parse(storedPrompt));
+      }
+      if (storedAiResponse) {
+        setAiResponse(JSON.parse(storedAiResponse));
+      }
+      if (storedActionableSummary) {
+        setActionableSummary(JSON.parse(storedActionableSummary));
+      }
+    } catch (e) {
+      console.error("Failed to load data from localStorage:", e);
+      // Clear localStorage if it's corrupted
+      localStorage.clear();
+    }
+  }, []); // Empty dependency array means this runs once on mount
+
+  // --- useEffect to save data to localStorage whenever it changes ---
+  useEffect(() => {
+    if (submittedPrompt) {
+      // Only save if there's actual data
+      localStorage.setItem("submittedPrompt", JSON.stringify(submittedPrompt));
+    }
+    if (aiResponse) {
+      localStorage.setItem("aiResponse", JSON.stringify(aiResponse));
+    }
+    if (actionableSummary) {
+      localStorage.setItem(
+        "actionableSummary",
+        JSON.stringify(actionableSummary)
+      );
+    }
+  }, [submittedPrompt, aiResponse, actionableSummary]);
 
   const submitPerplexityPrompt = useCallback(
     async (prompt, searchType = "finder") => {
