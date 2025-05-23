@@ -1,3 +1,4 @@
+// components/ReportPdf/ReportPdf.js
 import React from "react";
 import {
   Document,
@@ -8,187 +9,241 @@ import {
   Font,
 } from "@react-pdf/renderer";
 
-// Create styles for your PDF document
-const styles = StyleSheet.create({
-  page: {
-    flexDirection: "column",
-    backgroundColor: "#ffffff",
-    padding: 30,
-    fontFamily: "Helvetica", // Default font
-  },
-  section: {
-    margin: 10,
-    padding: 10,
-    flexGrow: 1,
-    borderBottom: "1px solid #eeeeee",
-    marginBottom: 15,
-  },
-  title: {
-    fontSize: 24,
-    textAlign: "center",
-    marginBottom: 20,
-    fontWeight: "bold",
-    color: "#333333",
-  },
-  subtitle: {
-    fontSize: 18,
-    marginBottom: 10,
-    fontWeight: "bold",
-    color: "#555555",
-  },
-  text: {
-    fontSize: 12,
-    marginBottom: 5,
-    lineHeight: 1.5,
-  },
-  listItem: {
-    fontSize: 12,
-    marginBottom: 3,
-    marginLeft: 10,
-  },
-  boldText: {
-    fontWeight: "bold",
-  },
-  // Specific styles for sections
-  querySection: {
-    backgroundColor: "#f0f4f8",
-    padding: 10,
-    borderRadius: 5,
-  },
-  ingredientSection: {
-    marginBottom: 10,
-    borderLeft: "4px solid #3b82f6", // blue-500
-    paddingLeft: 8,
-  },
-  summarySection: {
-    backgroundColor: "#ecfdf5", // green-50
-    padding: 10,
-    borderRadius: 5,
-    borderLeft: "4px solid #10b981", // green-400
-  },
-  // Style for pre-wrap content (like raw AI response)
-  preWrap: {
-    fontSize: 10,
-    fontFamily: "Courier", // Monospaced font for code/raw text
-    whiteSpace: "pre-wrap",
-    backgroundColor: "#f8f8f8",
-    padding: 5,
-    borderRadius: 3,
-  },
+import { themeColors } from "../../../lib/themeColors";
+
+Font.register({
+  family: "Open Sans",
+  fonts: [
+    {
+      src: "https://fonts.gstatic.com/s/opensans/v18/mem8YaGs126MiZpBA-UFVZ0e.ttf",
+      fontWeight: 400,
+    },
+    {
+      src: "https://fonts.gstatic.com/s/opensans/v18/mem5YaGs126MiZpBA-UFVZgZwckv.ttf",
+      fontWeight: 700,
+    },
+  ],
 });
+// You can register more weights or styles as
+const createStyles = (colors) =>
+  StyleSheet.create({
+    page: {
+      flexDirection: "column",
+      backgroundColor: colors.background,
+      padding: 40,
+      fontFamily: "Open Sans",
+      color: colors.text,
+    },
+    header: {
+      fontSize: 32,
+      textAlign: "center",
+      marginBottom: 30,
+      fontWeight: "bold",
+      color: colors.primary,
+      textTransform: "uppercase",
+    },
+    sectionContainer: {
+      marginBottom: 25,
+      padding: 20,
+      backgroundColor: "#FFFFFF", // Keeping content blocks white for consistency across themes
+      borderRadius: 8,
+      borderLeft: `5px solid ${colors.primary}`, // Strong accent border
+      shadowColor: "#000", // Slight shadow for depth
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.05,
+      shadowRadius: 5,
+    },
+    sectionTitle: {
+      fontSize: 20,
+      fontWeight: "bold",
+      marginBottom: 12,
+      color: colors.primary,
+      borderBottom: `1px solid ${colors.border}`,
+      paddingBottom: 5,
+    },
+    subsectionTitle: {
+      fontSize: 16,
+      fontWeight: "bold",
+      marginBottom: 8,
+      color: colors.accent, // Use accent for subheadings
+    },
+    text: {
+      fontSize: 11,
+      lineHeight: 1.6,
+      marginBottom: 4,
+    },
+    listItem: {
+      fontSize: 11,
+      marginBottom: 2,
+      marginLeft: 15,
+      position: "relative",
+    },
+    bullet: {
+      position: "absolute",
+      left: -10,
+      top: 0,
+      fontSize: 11,
+      color: colors.accent,
+    },
+    ingredientCard: {
+      marginBottom: 15,
+    },
+    // Specific styling for summary blocks - using slightly different shades
+    // for visual distinction within the summary section
+    summaryBlock: {
+      backgroundColor: colors.background, // Use theme background for blocks
+      padding: 10,
+      borderRadius: 5,
+      marginBottom: 10,
+      border: `1px solid ${colors.border}`,
+    },
+    cautionBlock: {
+      backgroundColor: colors.background,
+      padding: 10,
+      borderRadius: 5,
+      marginBottom: 10,
+      border: `1px solid ${colors.red || "#dc3545"}`, // Fallback red for cautions
+    },
+    // Raw AI response
+    rawResponseText: {
+      fontSize: 9,
+      fontFamily: "Courier",
+      backgroundColor: "#F0F0F0",
+      padding: 8,
+      borderRadius: 4,
+      whiteSpace: "pre-wrap",
+      color: colors.text, // Ensure text color is readable on this background
+    },
+  });
 
-// Create the PDF document component
-const ReportPdf = ({ reportData, selectedSections }) => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      <Text style={styles.title}>Ingredient Intelligence Report</Text>
+const ReportPdf = ({ reportData, selectedSections, currentTheme }) => {
+  const colors = themeColors[currentTheme] || themeColors.pastel;
+  const styles = createStyles(colors);
 
-      {selectedSections.includes("query") && reportData.submittedPrompt && (
-        <View style={[styles.section, styles.querySection]}>
-          <Text style={styles.subtitle}>Your Query:</Text>
-          <Text style={styles.text}>{reportData.submittedPrompt}</Text>
-        </View>
-      )}
+  return (
+    <Document>
+      <Page size="A4" style={styles.page}>
+        <Text style={styles.header}>Ingredient Intelligence Report</Text>
 
-      {selectedSections.includes("ingredients") &&
-        reportData.ingredients &&
-        Array.isArray(reportData.ingredients) &&
-        reportData.ingredients.length > 0 && (
-          <View style={styles.section}>
-            <Text style={styles.subtitle}>Suggested Ingredients:</Text>
-            {reportData.ingredients.map((ingredient, index) => (
-              <View key={index} style={styles.ingredientSection}>
-                <Text style={[styles.text, styles.boldText]}>
-                  {ingredient.name}
-                </Text>
-                <Text style={styles.text}>
-                  <Text style={styles.boldText}>Function:</Text>{" "}
-                  {ingredient.function}
-                </Text>
-                <Text style={styles.text}>
-                  <Text style={styles.boldText}>Clinical Studies:</Text>{" "}
-                  {ingredient.clinicalStudies}
-                </Text>
-                <Text style={styles.text}>
-                  <Text style={styles.boldText}>Market Trend Analysis:</Text>{" "}
-                  {ingredient.marketTrendAnalysis}
-                </Text>
-              </View>
-            ))}
+        {selectedSections.includes("query") && reportData.submittedPrompt && (
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>Your Research Query</Text>
+            <Text style={styles.text}>{reportData.submittedPrompt}</Text>
           </View>
         )}
 
-      {selectedSections.includes("summary") && reportData.actionableSummary && (
-        <View style={[styles.section, styles.summarySection]}>
-          <Text style={styles.subtitle}>
-            Actionable Summary for Your Business:
-          </Text>
+        {selectedSections.includes("ingredients") &&
+          reportData.ingredients &&
+          Array.isArray(reportData.ingredients) &&
+          reportData.ingredients.length > 0 && (
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>Key Ingredient Deep Dive</Text>
+              {reportData.ingredients.map((ingredient, index) => (
+                <View key={index} style={styles.ingredientCard}>
+                  <Text style={styles.subsectionTitle}>{ingredient.name}</Text>
+                  <Text style={styles.text}>
+                    <Text style={{ fontWeight: "bold" }}>Function:</Text>{" "}
+                    {ingredient.function}
+                  </Text>
+                  <Text style={styles.text}>
+                    <Text style={{ fontWeight: "bold" }}>
+                      Clinical Studies:
+                    </Text>{" "}
+                    {ingredient.clinicalStudies}
+                  </Text>
+                  <Text style={styles.text}>
+                    <Text style={{ fontWeight: "bold" }}>
+                      Market Trend Analysis:
+                    </Text>{" "}
+                    {ingredient.marketTrendAnalysis}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          )}
 
-          {reportData.actionableSummary.sellingPoints &&
-            reportData.actionableSummary.sellingPoints.length > 0 && (
-              <View style={{ marginBottom: 5 }}>
-                <Text style={[styles.text, styles.boldText]}>
-                  Key Selling Points:
-                </Text>
-                {reportData.actionableSummary.sellingPoints.map((point, i) => (
-                  <Text key={i} style={styles.listItem}>
-                    • {point}
-                  </Text>
-                ))}
-              </View>
-            )}
-          {reportData.actionableSummary.cautions &&
-            reportData.actionableSummary.cautions.length > 0 && (
-              <View style={{ marginBottom: 5 }}>
-                <Text style={[styles.text, styles.boldText]}>
-                  Cautions & Considerations:
-                </Text>
-                {reportData.actionableSummary.cautions.map((caution, i) => (
-                  <Text key={i} style={styles.listItem}>
-                    • {caution}
-                  </Text>
-                ))}
-              </View>
-            )}
-          {reportData.actionableSummary.marketOpportunities &&
-            reportData.actionableSummary.marketOpportunities.length > 0 && (
-              <View style={{ marginBottom: 5 }}>
-                <Text style={[styles.text, styles.boldText]}>
-                  Market Opportunities:
-                </Text>
-                {reportData.actionableSummary.marketOpportunities.map(
-                  (opportunity, i) => (
-                    <Text key={i} style={styles.listItem}>
-                      • {opportunity}
+        {selectedSections.includes("summary") &&
+          reportData.actionableSummary && (
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>Strategic Action Plan</Text>
+
+              {reportData.actionableSummary.sellingPoints &&
+                reportData.actionableSummary.sellingPoints.length > 0 && (
+                  <View style={styles.summaryBlock}>
+                    <Text style={styles.subsectionTitle}>
+                      Key Selling Points
                     </Text>
-                  )
+                    {reportData.actionableSummary.sellingPoints.map(
+                      (point, i) => (
+                        <Text key={i} style={styles.listItem}>
+                          <Text style={styles.bullet}>• </Text>
+                          {point}
+                        </Text>
+                      )
+                    )}
+                  </View>
                 )}
-              </View>
-            )}
-          {reportData.actionableSummary.nextSteps &&
-            reportData.actionableSummary.nextSteps.length > 0 && (
-              <View style={{ marginBottom: 5 }}>
-                <Text style={[styles.text, styles.boldText]}>
-                  Suggested Next Steps:
-                </Text>
-                {reportData.actionableSummary.nextSteps.map((step, i) => (
-                  <Text key={i} style={styles.listItem}>
-                    • {step}
-                  </Text>
-                ))}
-              </View>
-            )}
-        </View>
-      )}
+              {reportData.actionableSummary.cautions &&
+                reportData.actionableSummary.cautions.length > 0 && (
+                  <View style={styles.cautionBlock}>
+                    <Text style={styles.subsectionTitle}>
+                      Cautions & Considerations
+                    </Text>
+                    {reportData.actionableSummary.cautions.map((caution, i) => (
+                      <Text key={i} style={styles.listItem}>
+                        <Text style={styles.bullet}>• </Text>
+                        {caution}
+                      </Text>
+                    ))}
+                  </View>
+                )}
+              {reportData.actionableSummary.marketOpportunities &&
+                reportData.actionableSummary.marketOpportunities.length > 0 && (
+                  <View style={styles.summaryBlock}>
+                    <Text style={styles.subsectionTitle}>
+                      Market Opportunities
+                    </Text>
+                    {reportData.actionableSummary.marketOpportunities.map(
+                      (opportunity, i) => (
+                        <Text key={i} style={styles.listItem}>
+                          <Text style={styles.bullet}>• </Text>
+                          {opportunity}
+                        </Text>
+                      )
+                    )}
+                  </View>
+                )}
+              {reportData.actionableSummary.nextSteps &&
+                reportData.actionableSummary.nextSteps.length > 0 && (
+                  <View style={styles.summaryBlock}>
+                    <Text style={styles.subsectionTitle}>
+                      Suggested Next Steps
+                    </Text>
+                    {reportData.actionableSummary.nextSteps.map((step, i) => (
+                      <Text key={i} style={styles.listItem}>
+                        <Text style={styles.bullet}>• </Text>
+                        {step}
+                      </Text>
+                    ))}
+                  </View>
+                )}
+            </View>
+          )}
 
-      {selectedSections.includes("rawResponse") && reportData.rawAiResponse && (
-        <View style={styles.section}>
-          <Text style={styles.subtitle}>Raw AI Response:</Text>
-          <Text style={styles.preWrap}>{reportData.rawAiResponse}</Text>
-        </View>
-      )}
-    </Page>
-  </Document>
-);
+        {selectedSections.includes("rawResponse") &&
+          reportData.rawAiResponse && (
+            <View style={styles.sectionContainer}>
+              <Text style={styles.sectionTitle}>
+                Raw AI Response (for Debugging)
+              </Text>
+              <Text style={styles.rawResponseText}>
+                {reportData.rawAiResponse}
+              </Text>
+            </View>
+          )}
+      </Page>
+    </Document>
+  );
+};
 
 export default ReportPdf;
