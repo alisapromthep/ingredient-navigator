@@ -21,9 +21,9 @@ export default function ReportsPage() {
   // State for theme selection, loaded from localStorage
   const [currentTheme, setCurrentTheme] = useState(() => {
     if (typeof window !== "undefined") {
-      return localStorage.getItem("reportTheme") || "pastel";
+      return localStorage.getItem("reportTheme") || "lightblue";
     }
-    return "pastel";
+    return "lightblue";
   });
 
   // Save theme to localStorage whenever it changes
@@ -34,7 +34,7 @@ export default function ReportsPage() {
   }, [currentTheme]);
 
   // Derive active colors from the selected theme
-  const activeColors = themeColors[currentTheme] || themeColors.pastel;
+  const activeColors = themeColors[currentTheme] || themeColors.lightblue;
 
   const reportData = {
     submittedPrompt,
@@ -43,6 +43,17 @@ export default function ReportsPage() {
     rawAiResponse: aiResponse?.rawResponse,
   };
 
+  //console.log("reportData", reportData);
+
+  const pdfReportData = {
+    submittedPrompt: reportData.submittedPrompt || "",
+    ingredients: Array.isArray(reportData.ingredients)
+      ? reportData.ingredients
+      : [],
+    actionableSummary: reportData.actionableSummary || {},
+    rawAiResponse: reportData.rawAiResponse || "",
+  };
+  //console.log(pdfReportData);
   const hasReportData =
     submittedPrompt || aiResponse?.ingredients?.length > 0 || actionableSummary;
 
@@ -60,7 +71,7 @@ export default function ReportsPage() {
 
   if (loading) {
     return (
-      <div className="text-center p-8 text-blue-600 font-semibold">
+      <div className="text-center p-8 text-indigo-600 font-semibold">
         Loading your report...
       </div>
     );
@@ -86,60 +97,31 @@ export default function ReportsPage() {
     (key) => selectedPdfSections[key]
   );
 
+  console.log("pdfSections", pdfSections);
+
   return (
-    <div
-      className="container mx-auto p-6 max-w-5xl font-sans"
-      style={{
-        backgroundColor: activeColors.background,
-        color: activeColors.text,
-      }}
-    >
-      <h1
-        className="text-4xl font-extrabold mb-8 text-center uppercase"
-        style={{ color: activeColors.primary }}
-      >
+    <div className="container mx-auto p-6 max-w-5xl font-sans text-indigo-950">
+      <h1 className="text-4xl font-extrabold mb-8 text-center uppercase text-indigo-50">
         Ingredient Intelligence Report
       </h1>
 
       {/* Theme Selector */}
-      <div
-        className="mb-10 p-6 rounded-xl shadow-lg border-l-4"
-        style={{
-          borderColor: activeColors.primary,
-          backgroundColor:
-            activeColors.background === "#ffffff" ? "#f0f0f0" : "#ffffff",
-        }}
-      >
-        <h2
-          className="text-xl font-bold mb-4"
-          style={{ color: activeColors.primary }}
-        >
+      <div className="mb-10 p-6 rounded-xl shadow-lg border-l-4 border-indigo-700 bg-white">
+        <h2 className="text-xl font-bold mb-4 text-indigo-700">
           Choose Report Theme:
         </h2>
         <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
           {Object.keys(themeColors).map((themeName) => (
             <label
               key={themeName}
-              className={`h-8 flex items-center p-1 rounded-md cursor-pointer transition-all duration-200 ease-in-out
-                ${
-                  currentTheme === themeName
-                    ? `bg-opacity-10 shadow-sm`
-                    : `hover:bg-opacity-5`
-                }
+              className={`text-indigo-700 h-8 flex items-center p-1 rounded-md cursor-pointer transition-all duration-200 ease-in-out
               `}
-              style={{
-                backgroundColor:
-                  currentTheme === themeName
-                    ? activeColors.accent + "20"
-                    : "transparent",
-              }}
             >
               <input
                 type="checkbox"
                 checked={currentTheme === themeName}
                 onChange={() => handleThemeChange(themeName)}
-                className="h-4 w-4 rounded-sm mr-2" // Smaller checkbox
-                style={{ accentColor: themeColors[themeName].primary }}
+                className="h-4 w-4 rounded-sm mr-2 accent-indigo-700"
               />
               <div
                 className="w-4 h-4 rounded-sm mr-2" // Smaller color square
@@ -161,18 +143,8 @@ export default function ReportsPage() {
       </div>
 
       {/* PDF Options and Download Button - Styled as a distinct card */}
-      <div
-        className="mb-10 p-8 rounded-xl shadow-lg border-l-4"
-        style={{
-          borderColor: activeColors.accent,
-          backgroundColor:
-            activeColors.background === "#ffffff" ? "#f8f8f8" : "#ffffff",
-        }}
-      >
-        <h2
-          className="text-2xl font-bold mb-4"
-          style={{ color: activeColors.primary }}
-        >
+      <div className="mb-10 p-8 rounded-xl shadow-lg border-l-4 border-indigo-700 bg-white">
+        <h2 className="text-2xl font-bold mb-4 text-indigo-950">
           Generate PDF Report:
         </h2>
 
@@ -182,22 +154,18 @@ export default function ReportsPage() {
               type="checkbox"
               checked={selectedPdfSections.query}
               onChange={() => handleSectionToggle("query")}
-              className="form-checkbox h-6 w-6 rounded-md"
-              style={{ accentColor: activeColors.primary }}
+              className="form-checkbox h-6 w-6 rounded-md accent-indigo-700"
             />
-            <span style={{ color: activeColors.text }}>
-              Include Query Details
-            </span>
+            <span className="text-indigo-950">Include Query Details</span>
           </label>
           <label className="flex items-center space-x-3 text-lg">
             <input
               type="checkbox"
               checked={selectedPdfSections.ingredients}
               onChange={() => handleSectionToggle("ingredients")}
-              className="form-checkbox h-6 w-6 rounded-md"
-              style={{ accentColor: activeColors.primary }}
+              className="form-checkbox h-6 w-6 rounded-md accent-indigo-700"
             />
-            <span style={{ color: activeColors.text }}>
+            <span className="text-indigo-950">
               Include Ingredient Deep Dive
             </span>
           </label>
@@ -206,10 +174,9 @@ export default function ReportsPage() {
               type="checkbox"
               checked={selectedPdfSections.summary}
               onChange={() => handleSectionToggle("summary")}
-              className="form-checkbox h-6 w-6 rounded-md"
-              style={{ accentColor: activeColors.primary }}
+              className="form-checkbox h-6 w-6 rounded-md accent-indigo-700"
             />
-            <span style={{ color: activeColors.text }}>
+            <span className="text-indigo-950">
               Include Strategic Action Plan
             </span>
           </label>
@@ -221,9 +188,7 @@ export default function ReportsPage() {
               className="form-checkbox h-6 w-6 rounded-md"
               style={{ accentColor: activeColors.primary }}
             />
-            <span style={{ color: activeColors.text }}>
-              Include Raw AI Output
-            </span>
+            <span className="text-indigo-950">Include Raw AI Output</span>
           </label>
         </div>
 
@@ -240,14 +205,7 @@ export default function ReportsPage() {
           >
             {({ blob, url, loading, error }) => (
               <button
-                className="w-full md:w-auto font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md text-lg"
-                style={{
-                  backgroundColor: activeColors.primary,
-                  color:
-                    activeColors.background === "#ffffff"
-                      ? "#ffffff"
-                      : activeColors.text,
-                }}
+                className="text-indigo-950 bg-indigo-100 w-full md:w-auto font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md text-lg"
                 disabled={loading}
               >
                 {loading

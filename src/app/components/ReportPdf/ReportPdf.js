@@ -117,8 +117,17 @@ const createStyles = (colors) =>
   });
 
 const ReportPdf = ({ reportData, selectedSections, currentTheme }) => {
-  const colors = themeColors[currentTheme] || themeColors.pastel;
+  const colors = themeColors[currentTheme] || themeColors.lightblue;
   const styles = createStyles(colors);
+
+  console.log(
+    "report data",
+    reportData,
+    "selectedSection",
+    selectedSections,
+    "currentTheme",
+    currentTheme
+  );
 
   return (
     <Document>
@@ -128,7 +137,9 @@ const ReportPdf = ({ reportData, selectedSections, currentTheme }) => {
         {selectedSections.includes("query") && reportData.submittedPrompt && (
           <View style={styles.sectionContainer}>
             <Text style={styles.sectionTitle}>Your Research Query</Text>
-            <Text style={styles.text}>{reportData.submittedPrompt}</Text>
+            <Text style={styles.text}>
+              {(reportData.submittedPrompt || "").toString()}
+            </Text>
           </View>
         )}
 
@@ -140,22 +151,24 @@ const ReportPdf = ({ reportData, selectedSections, currentTheme }) => {
               <Text style={styles.sectionTitle}>Key Ingredient Deep Dive</Text>
               {reportData.ingredients.map((ingredient, index) => (
                 <View key={index} style={styles.ingredientCard}>
-                  <Text style={styles.subsectionTitle}>{ingredient.name}</Text>
+                  <Text style={styles.subsectionTitle}>
+                    {(ingredient.name || "").toString()}
+                  </Text>
                   <Text style={styles.text}>
                     <Text style={{ fontWeight: "bold" }}>Function:</Text>{" "}
-                    {ingredient.function}
+                    {(ingredient.function || "").toString()}
                   </Text>
                   <Text style={styles.text}>
                     <Text style={{ fontWeight: "bold" }}>
                       Clinical Studies:
                     </Text>{" "}
-                    {ingredient.clinicalStudies}
+                    {ingredient.clinicalStudies || "N/A".toString()}
                   </Text>
                   <Text style={styles.text}>
                     <Text style={{ fontWeight: "bold" }}>
                       Market Trend Analysis:
                     </Text>{" "}
-                    {ingredient.marketTrendAnalysis}
+                    {ingredient.marketTrendAnalysis || "".toString()}
                   </Text>
                 </View>
               ))}
