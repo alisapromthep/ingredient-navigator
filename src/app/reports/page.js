@@ -105,120 +105,124 @@ export default function ReportsPage() {
         Ingredient Intelligence Report
       </h1>
 
-      {/* Theme Selector */}
-      <div className="mb-10 p-6 rounded-xl shadow-lg border-l-4 border-indigo-700 bg-white">
-        <h2 className="text-xl font-bold mb-4 text-indigo-700">
-          Choose Report Theme:
-        </h2>
-        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-1">
-          {Object.keys(themeColors).map((themeName) => (
-            <label
-              key={themeName}
-              className={`text-indigo-700 h-8 flex items-center p-1 rounded-md cursor-pointer transition-all duration-200 ease-in-out
-              `}
-            >
+      <div className="grid grid-cols-3">
+        {/* PDF Options and Download Button - Styled as a distinct card */}
+        <div className="col-span-2 mb-10 p-8 rounded-xl shadow-lg border-l-4 border-indigo-700 bg-white">
+          <h2 className="text-2xl font-bold mb-4 text-indigo-950">
+            Generate PDF Report:
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <label className="flex items-center space-x-3 text-lg">
               <input
                 type="checkbox"
-                checked={currentTheme === themeName}
-                onChange={() => handleThemeChange(themeName)}
-                className="h-4 w-4 rounded-sm mr-2 accent-indigo-700"
+                checked={selectedPdfSections.query}
+                onChange={() => handleSectionToggle("query")}
+                className="form-checkbox h-6 w-6 rounded-md accent-indigo-700"
               />
-              <div
-                className="w-4 h-4 rounded-sm mr-2" // Smaller color square
-                style={{ backgroundColor: themeColors[themeName].primary }} // Removed border from color square
-                title={themeName
-                  .replace(/([A-Z])/g, " $1")
-                  .replace(/^./, (str) => str.toUpperCase())}
-              ></div>
-              <span className="text-base" style={{ color: activeColors.text }}>
-                {" "}
-                {/* Smaller text */}
-                {themeName
-                  .replace(/([A-Z])/g, " $1")
-                  .replace(/^./, (str) => str.toUpperCase())}
+              <span className="text-indigo-950">Include Query Details</span>
+            </label>
+            <label className="flex items-center space-x-3 text-lg">
+              <input
+                type="checkbox"
+                checked={selectedPdfSections.ingredients}
+                onChange={() => handleSectionToggle("ingredients")}
+                className="form-checkbox h-6 w-6 rounded-md accent-indigo-700"
+              />
+              <span className="text-indigo-950">
+                Include Ingredient Deep Dive
               </span>
             </label>
-          ))}
-        </div>
-      </div>
-
-      {/* PDF Options and Download Button - Styled as a distinct card */}
-      <div className="mb-10 p-8 rounded-xl shadow-lg border-l-4 border-indigo-700 bg-white">
-        <h2 className="text-2xl font-bold mb-4 text-indigo-950">
-          Generate PDF Report:
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <label className="flex items-center space-x-3 text-lg">
-            <input
-              type="checkbox"
-              checked={selectedPdfSections.query}
-              onChange={() => handleSectionToggle("query")}
-              className="form-checkbox h-6 w-6 rounded-md accent-indigo-700"
-            />
-            <span className="text-indigo-950">Include Query Details</span>
-          </label>
-          <label className="flex items-center space-x-3 text-lg">
-            <input
-              type="checkbox"
-              checked={selectedPdfSections.ingredients}
-              onChange={() => handleSectionToggle("ingredients")}
-              className="form-checkbox h-6 w-6 rounded-md accent-indigo-700"
-            />
-            <span className="text-indigo-950">
-              Include Ingredient Deep Dive
-            </span>
-          </label>
-          <label className="flex items-center space-x-3 text-lg">
-            <input
-              type="checkbox"
-              checked={selectedPdfSections.summary}
-              onChange={() => handleSectionToggle("summary")}
-              className="form-checkbox h-6 w-6 rounded-md accent-indigo-700"
-            />
-            <span className="text-indigo-950">
-              Include Strategic Action Plan
-            </span>
-          </label>
-          <label className="flex items-center space-x-3 text-lg">
-            <input
-              type="checkbox"
-              checked={selectedPdfSections.rawResponse}
-              onChange={() => handleSectionToggle("rawResponse")}
-              className="form-checkbox h-6 w-6 rounded-md"
-              style={{ accentColor: activeColors.primary }}
-            />
-            <span className="text-indigo-950">Include Raw AI Output</span>
-          </label>
-        </div>
-
-        {hasReportData && pdfSections.length > 0 ? (
-          <PDFDownloadLink
-            document={
-              <ReportPdf
-                reportData={reportData}
-                selectedSections={pdfSections}
-                currentTheme={currentTheme}
+            <label className="flex items-center space-x-3 text-lg">
+              <input
+                type="checkbox"
+                checked={selectedPdfSections.summary}
+                onChange={() => handleSectionToggle("summary")}
+                className="form-checkbox h-6 w-6 rounded-md accent-indigo-700"
               />
-            }
-            fileName="ingredient_report.pdf"
-          >
-            {({ blob, url, loading, error }) => (
-              <button
-                className="text-indigo-950 bg-indigo-100 w-full md:w-auto font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md text-lg"
-                disabled={loading}
+              <span className="text-indigo-950">
+                Include Strategic Action Plan
+              </span>
+            </label>
+            <label className="flex items-center space-x-3 text-lg">
+              <input
+                type="checkbox"
+                checked={selectedPdfSections.rawResponse}
+                onChange={() => handleSectionToggle("rawResponse")}
+                className="form-checkbox h-6 w-6 rounded-md"
+                style={{ accentColor: activeColors.primary }}
+              />
+              <span className="text-indigo-950">Include Raw AI Output</span>
+            </label>
+          </div>
+
+          {hasReportData && pdfSections.length > 0 ? (
+            <PDFDownloadLink
+              document={
+                <ReportPdf
+                  reportData={reportData}
+                  selectedSections={pdfSections}
+                  currentTheme={currentTheme}
+                />
+              }
+              fileName="ingredient_report.pdf"
+            >
+              {({ blob, url, loading, error }) => (
+                <button
+                  className="text-indigo-950 bg-indigo-100 w-full md:w-auto font-bold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md text-lg"
+                  disabled={loading}
+                >
+                  {loading
+                    ? "Generating PDF..."
+                    : "Download Comprehensive Report"}
+                </button>
+              )}
+            </PDFDownloadLink>
+          ) : (
+            <p className="text-gray-600 text-center py-4">
+              Select content to enable PDF download.
+            </p>
+          )}
+        </div>
+        {/* Theme Selector */}
+        <div className="mb-10 p-6 rounded-xl shadow-lg border-l-4 border-indigo-700 bg-white">
+          <h2 className="text-xl font-bold mb-4 text-indigo-700">
+            Choose Report Theme:
+          </h2>
+          <div className="grid grid-cols-2 gap-1">
+            {Object.keys(themeColors).map((themeName) => (
+              <label
+                key={themeName}
+                className={`text-indigo-700 h-8 flex items-center p-1 rounded-md cursor-pointer transition-all duration-200 ease-in-out
+              `}
               >
-                {loading
-                  ? "Generating PDF..."
-                  : "Download Comprehensive Report"}
-              </button>
-            )}
-          </PDFDownloadLink>
-        ) : (
-          <p className="text-gray-600 text-center py-4">
-            Select content to enable PDF download.
-          </p>
-        )}
+                <input
+                  type="checkbox"
+                  checked={currentTheme === themeName}
+                  onChange={() => handleThemeChange(themeName)}
+                  className="h-4 w-4 rounded-sm mr-2 accent-indigo-700"
+                />
+                <div
+                  className="w-4 h-4 rounded-sm mr-2" // Smaller color square
+                  style={{ backgroundColor: themeColors[themeName].primary }} // Removed border from color square
+                  title={themeName
+                    .replace(/([A-Z])/g, " $1")
+                    .replace(/^./, (str) => str.toUpperCase())}
+                ></div>
+                <span
+                  className="text-base"
+                  style={{ color: activeColors.text }}
+                >
+                  {" "}
+                  {/* Smaller text */}
+                  {themeName
+                    .replace(/([A-Z])/g, " $1")
+                    .replace(/^./, (str) => str.toUpperCase())}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Display Latest Insight - Styled as a distinct card */}
