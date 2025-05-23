@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 export async function GET(request) {
-  console.log("API KEY?????", process.env.PERPLEXITY_API_KEY);
   return new Response("testing", {
     status: 200,
     headers: { "Content-Type": "application/json" },
@@ -121,7 +120,7 @@ export async function POST(request) {
           type: "json_schema",
           json_schema: { schema: ingredientArraySchema },
         },
-        max_tokens: 200,
+        max_tokens: 500,
       });
 
       const contentString1 = completion1.choices[0]?.message?.content;
@@ -130,9 +129,9 @@ export async function POST(request) {
         contentString1
       );
 
-      //ingredientsData = JSON.parse(contentString1);
+      ingredientsData = JSON.parse(contentString1);
 
-      primaryAiResponseText = JSON.stringify(contentString1, null, 2); // Stringify for Layer 2 prompt
+      primaryAiResponseText = contentString1;
     } catch (parseError) {
       console.error("Error in Layer 1 (Ingredient JSON Schema):", parseError);
       return NextResponse.json(
@@ -168,7 +167,8 @@ export async function POST(request) {
       });
 
       const contentString2 = completion2.choices[0]?.message?.content;
-      actionableSummaryJson = JSON.stringify(contentString2, null, 2);
+      actionableSummaryJson = JSON.parse(contentString2);
+      //actionableSummaryJson = JSON.stringify(contentString2, null, 2);
       console.log(
         "Raw JSON response from Perplexity (Layer 2 - Summary):",
         contentString2
@@ -179,7 +179,7 @@ export async function POST(request) {
 
     // Return both the structured ingredient data and the actionable summary
     return NextResponse.json({
-      ingredients: primaryAiResponseText, // Structured array of ingredient objects
+      ingredients: ingredientsData, // Structured array of ingredient objects
       actionableSummary: actionableSummaryJson, // Structured JSON object for summary
     });
   } catch (error) {
