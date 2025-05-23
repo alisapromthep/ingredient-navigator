@@ -9,12 +9,17 @@ function Navbar() {
     { name: "Report", href: "/reports" },
   ];
   return (
-    <nav className="flex justify-end gap-4">
-      {navigators.map((item, i) => (
-        <Link className="" key={i} href={item.href}>
-          {item.name}
-        </Link>
-      ))}
+    <nav className="flex justify-between">
+      <div>
+        <h2 className="font-bold">Ingredient Navigator</h2>
+      </div>
+      <div className="flex gap-4">
+        {navigators.map((item, i) => (
+          <Link className="" key={i} href={item.href}>
+            {item.name}
+          </Link>
+        ))}
+      </div>
     </nav>
   );
 }

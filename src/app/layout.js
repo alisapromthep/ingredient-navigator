@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`m-4 ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`bg-indigo-100 m-4 ${geistSans.variable} ${geistMono.variable} antialiased `}
       >
         <PerplexityProvider>
           <Navbar />

@@ -52,7 +52,7 @@ export default function IngredientFinderForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-4 p-6 bg-white shadow-md rounded-lg"
+      className="space-y-4 p-6 bg-indigo-100 shadow-md rounded-lg"
     >
       <h2 className="text-2xl font-bold mb-4 text-gray-800">
         Ingredient Finder
@@ -71,7 +71,7 @@ export default function IngredientFinderForm() {
           value={productCategory}
           onChange={(e) => setProductCategory(e.target.value)}
           required
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+          className="mt-1 block w-full pl-3 pr-10 py-2 bg-white text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
         >
           <option value="">Select a category</option>
           <option value="hair">Hair</option>
@@ -95,7 +95,7 @@ export default function IngredientFinderForm() {
           value={productType}
           onChange={(e) => setProductType(e.target.value)}
           required
-          className="mt-1 block w-full pl-3 pr-10 py-2 text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md"
+          className="mt-1 block w-full pl-3 pr-10 py-2 bg-white text-base text-gray-700 border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
         >
           <option value="">Select type</option>
           <option value="water-based">Water-based</option>
@@ -118,7 +118,7 @@ export default function IngredientFinderForm() {
           value={productFunction}
           onChange={(e) => setProductFunction(e.target.value)}
           placeholder="e.g., provide deep hydration"
-          className="text-gray-700 mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
+          className="text-gray-700 bg-white mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
         />
       </div>
 
@@ -129,7 +129,7 @@ export default function IngredientFinderForm() {
           type="checkbox"
           checked={includeClinicalStudies}
           onChange={(e) => setIncludeClinicalStudies(e.target.checked)}
-          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
         />
         <label
           htmlFor="includeClinicalStudies"
@@ -154,7 +154,7 @@ export default function IngredientFinderForm() {
           onChange={(e) => setNumIngredients(parseInt(e.target.value))}
           min="1"
           max="10"
-          className="text-gray-700 mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
+          className="text-gray-700 bg-white mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
         />
       </div>
 
@@ -165,7 +165,7 @@ export default function IngredientFinderForm() {
           type="checkbox"
           checked={connectToMarketTrend}
           onChange={(e) => setConnectToMarketTrend(e.target.checked)}
-          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
         />
         <label
           htmlFor="connectToMarketTrend"
@@ -178,7 +178,7 @@ export default function IngredientFinderForm() {
       <button
         type="submit"
         disabled={loading}
-        className="bg-blue-500 text-white p-2 rounded"
+        className="bg-indigo-600 text-white p-2 rounded"
       >
         {loading ? "Submitting..." : "Find Ingredients"}
       </button>
