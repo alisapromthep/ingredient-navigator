@@ -5,8 +5,14 @@ import IngredientFinderForm from "../components/IngredientFinderForm/IngredientF
 import { usePerplexity } from "../context/PerplexityContext";
 
 function IngredientFinder() {
-  const { ingredientFound, setIngredientFound, loading, error } =
-    usePerplexity();
+  const {
+    ingredientFound,
+    setIngredientFound,
+    activeFiltersInfo,
+    setActiveFiltersInfo,
+    loading,
+    error,
+  } = usePerplexity();
 
   const hasIngredientBeenFound =
     ingredientFound && Object.keys(ingredientFound).length > 0;
@@ -39,9 +45,18 @@ function IngredientFinder() {
           <div>
             {ingredientFound.map((ingredient, i) => {
               return (
-                <div>
+                <div key={i}>
                   <p>{ingredient.name}</p>
                   <p>{ingredient.function}</p>
+                </div>
+              );
+            })}
+            {activeFiltersInfo.map((filter, i) => {
+              return (
+                <div key={i}>
+                  <p>{filter.name}</p>
+                  <p>{filter.status}</p>
+                  <p>{filter.explanation}</p>
                 </div>
               );
             })}

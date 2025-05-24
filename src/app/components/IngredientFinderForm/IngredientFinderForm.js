@@ -1,33 +1,71 @@
 "use client"; // This component needs client-side interactivity
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { usePerplexity } from "@/app/context/PerplexityContext";
+import { ingredientFilters } from "@/lib/ingredientFilters";
 
 export default function IngredientFinderForm() {
-  const { submitPerplexityPrompt, loading, error } = usePerplexity();
+  const { submitPerplexityIngredientSearch, loading, error } = usePerplexity();
 
   const [productCategory, setProductCategory] = useState("");
   const [productType, setProductType] = useState("");
   const [productFunction, setProductFunction] = useState("");
   const [numIngredients, setNumIngredients] = useState(2);
+  const [selectedFilters, setSelectedFilters] = useState({});
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleFilterChange = useCallback((category, filter) => {
+    setSelectedFilters((prevFilters) => ({
+      ...prevFilters,
+      [category]: {
+        ...prevFilters[category],
+        [filter]: !prevFilters[category]?.[filter], // Toggle the boolean state
+      },
+    }));
+  }, []);
 
-    let prompt = `Suggest ${numIngredients} key ingredients for a ${productType} ${productCategory} product.`;
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-    if (productFunction) {
-      prompt += ` Its primary function should be to ${productFunction}.`;
-    }
+      let prompt = `Suggest ${numIngredients} key ingredients for a ${productType} ${productCategory} product.`;
 
-    prompt += ` Explain the function, usages and benefits of each suggested ingredient.`;
+      if (productFunction) {
+        prompt += ` Its primary function should be to ${productFunction}.`;
+      }
 
-    try {
-      await submitPerplexityPrompt(prompt, "finder");
-    } catch (error) {
-      console.error("form submission error", error);
-    }
-  };
+      const activeFilters = [];
+      for (const category in selectedFilters) {
+        for (const filter in selectedFilters[category]) {
+          if (selectedFilters[category][filter]) {
+            activeFilters.push(filter);
+          }
+        }
+      }
+
+      // Add filters to the prompt, with a specific instruction for JSON confirmation
+      if (activeFilters.length > 0) {
+        prompt += `\n\nEnsure each suggested ingredient strictly adheres to the following criteria: ${activeFilters.join(
+          ", "
+        )}.`;
+      }
+
+      prompt += ` Explain the function and benefits of each suggested ingredient within 2-4 sentences, without going into details about each of the specific criteria`;
+
+      try {
+        await submitPerplexityIngredientSearch(prompt, "finder", activeFilters);
+      } catch (error) {
+        console.error("form submission error", error);
+      }
+    },
+    [
+      numIngredients,
+      productType,
+      productCategory,
+      productFunction,
+      selectedFilters,
+      submitPerplexityIngredientSearch,
+    ]
+  );
 
   return (
     <form
@@ -101,6 +139,31 @@ export default function IngredientFinderForm() {
           className="text-gray-700 bg-white mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
         />
       </div>
+      {/* 4. Filters & specifications  */}
+      {Object.entries(ingredientFilters).map(([category, filters]) => (
+        <div
+          key={category}
+          className="mb-5 p-4 bg-gray-50 rounded-lg shadow-sm border border-gray-100"
+        >
+          <h4 className="text-lg font-bold text-gray-700 mb-3">{category}</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+            {filters.map((filter) => (
+              <label
+                key={filter}
+                className="flex items-center space-x-2 text-sm text-gray-600 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  className="form-checkbox h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                  checked={!!selectedFilters[category]?.[filter]} // Use !! to convert to boolean
+                  onChange={() => handleFilterChange(category, filter)}
+                />
+                <span>{filter}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      ))}
 
       {/* 5. Number of Ingredients */}
       <div>

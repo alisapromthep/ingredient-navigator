@@ -7,6 +7,7 @@ import React, {
   useCallback,
   useEffect,
 } from "react";
+import { transformAppliedFiltersToArray } from "@/utils/dataTransformer";
 
 const PerplexityContext = createContext(undefined);
 
@@ -25,6 +26,7 @@ export function PerplexityProvider({ children }) {
   const [searchHistory, setSearchHistory] = useState([]);
   const [actionableSummary, setActionableSummary] = useState(null); // Keep separate for easier access
   const [ingredientFound, setIngredientFound] = useState([]);
+  const [activeFiltersInfo, setActiveFiltersInfo] = useState([]);
 
   // --- useEffect to load data from localStorage on mount ---
   useEffect(() => {
@@ -32,12 +34,16 @@ export function PerplexityProvider({ children }) {
       const storedPrompt = localStorage.getItem("submittedPrompt");
       const storedIngredientFound = localStorage.getItem("ingredientFound");
       const storedActionableSummary = localStorage.getItem("actionableSummary");
+      const storedActiveFiltersInfo = localStorage.getItem("activeFiltersInfo");
 
       if (storedPrompt) {
         setSubmittedPrompt(JSON.parse(storedPrompt));
       }
       if (storedIngredientFound) {
         setIngredientFound(JSON.parse(storedIngredientFound));
+      }
+      if (storedActiveFiltersInfo) {
+        setActiveFiltersInfo(JSON.parse(storedActiveFiltersInfo));
       }
       if (storedActionableSummary) {
         setActionableSummary(JSON.parse(storedActionableSummary));
@@ -56,6 +62,12 @@ export function PerplexityProvider({ children }) {
     if (ingredientFound) {
       localStorage.setItem("ingredientFound", JSON.stringify(ingredientFound));
     }
+    if (activeFiltersInfo) {
+      localStorage.setItem(
+        "activeFiltersInfo",
+        JSON.stringify(activeFiltersInfo)
+      );
+    }
     if (actionableSummary) {
       localStorage.setItem(
         "actionableSummary",
@@ -64,8 +76,8 @@ export function PerplexityProvider({ children }) {
     }
   }, [submittedPrompt, ingredientFound, actionableSummary]);
 
-  const submitPerplexityPrompt = useCallback(
-    async (prompt, searchType = "finder") => {
+  const submitPerplexityIngredientSearch = useCallback(
+    async (prompt, searchType = "finder", activeFilters) => {
       setLoading(true);
       setError(null);
       setIngredientFound("");
@@ -78,7 +90,7 @@ export function PerplexityProvider({ children }) {
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ prompt }),
+            body: JSON.stringify({ prompt, activeFilters: activeFilters }),
           });
 
           if (!response.ok) {
@@ -99,6 +111,10 @@ export function PerplexityProvider({ children }) {
 
           // Update context state with the parsed data
           setIngredientFound(data.ingredientsData);
+          const filtersArray = transformAppliedFiltersToArray(
+            data.appliedFilters
+          );
+          setActiveFiltersInfo(filtersArray);
 
           setSearchHistory((prevHistory) => [
             {
@@ -128,7 +144,9 @@ export function PerplexityProvider({ children }) {
     setIngredientFound,
     submittedPrompt,
     searchHistory,
-    submitPerplexityPrompt,
+    submitPerplexityIngredientSearch,
+    activeFiltersInfo,
+    setActiveFiltersInfo,
   };
 
   return (
