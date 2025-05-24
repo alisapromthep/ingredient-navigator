@@ -50,7 +50,7 @@ function IngredientFinder() {
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-50 p-4">
-      <div className="lg:w-2/3 lg:pr-4">
+      <div className="">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-extrabold text-indigo-950">
             Ingredient Finder
@@ -75,57 +75,61 @@ function IngredientFinder() {
         )}
 
         {hasIngredientBeenFound ? (
-          <div className="bg-white p-6 rounded-lg shadow-xl border border-gray-200">
+          <div className=" bg-white p-6 rounded-lg shadow-xl border border-gray-200">
             <h2 className="text-2xl font-bold text-indigo-950 mb-6 border-b pb-3">
               Ingredient Search Results
             </h2>
-            <section className="space-y-6">
-              {ingredientFound.map((ingredient, i) => (
-                <div
-                  key={i}
-                  className="bg-white p-6 rounded-lg shadow-md border-l-4 border-indigo-700 text-indigo-950"
-                >
-                  <h3 className="text-xl font-bold mb-2">{ingredient.name}</h3>
-                  <p className="text-gray-700 text-base">
-                    {ingredient.function}
-                  </p>
-                </div>
-              ))}
-              {activeFiltersInfo.map((filter, i) => {
-                const statusColorClass =
-                  filter.status === true
-                    ? "text-green-600"
-                    : filter.status === false
-                    ? "text-red-600"
-                    : "text-yellow-600";
-                const statusSymbol =
-                  filter.status === true
-                    ? "✔️"
-                    : filter.status === false
-                    ? "❌"
-                    : "⚠️";
-
-                return (
+            <div className="grid grid-cols-3 gap-2">
+              <section className="col-span-2 space-y-6">
+                {ingredientFound.map((ingredient, i) => (
                   <div
                     key={i}
                     className="bg-white p-6 rounded-lg shadow-md border-l-4 border-indigo-700 text-indigo-950"
                   >
-                    <div className="flex items-center mb-2">
-                      <span className={`text-2xl mr-2 ${statusColorClass}`}>
-                        {statusSymbol}
-                      </span>
-                      <h3 className="text-lg font-bold">{filter.name}</h3>
-                    </div>
-                    <p className="text-gray-700 text-base leading-relaxed">
-                      {filter.explanation}
+                    <h3 className="text-xl font-bold mb-2">
+                      {ingredient.name}
+                    </h3>
+                    <p className="text-gray-700 text-base">
+                      {ingredient.function}
                     </p>
                   </div>
-                );
-              })}
-            </section>
-            <section>
-              <IngredientAnalysis />
-            </section>
+                ))}
+                {activeFiltersInfo.map((filter, i) => {
+                  const statusColorClass =
+                    filter.status === true
+                      ? "text-green-600"
+                      : filter.status === false
+                      ? "text-red-600"
+                      : "text-yellow-600";
+                  const statusSymbol =
+                    filter.status === true
+                      ? "✔️"
+                      : filter.status === false
+                      ? "❌"
+                      : "⚠️";
+
+                  return (
+                    <div
+                      key={i}
+                      className="bg-white p-6 rounded-lg shadow-md border-l-4 border-indigo-700 text-indigo-950"
+                    >
+                      <div className="flex items-center mb-2">
+                        <span className={`text-2xl mr-2 ${statusColorClass}`}>
+                          {statusSymbol}
+                        </span>
+                        <h3 className="text-lg font-bold">{filter.name}</h3>
+                      </div>
+                      <p className="text-gray-700 text-base leading-relaxed">
+                        {filter.explanation}
+                      </p>
+                    </div>
+                  );
+                })}
+              </section>
+              <section className="">
+                <IngredientAnalysis />
+              </section>
+            </div>
           </div>
         ) : (
           <IngredientFinderForm />

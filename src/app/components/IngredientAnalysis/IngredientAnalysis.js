@@ -4,7 +4,6 @@ import React, { useState, useCallback } from "react";
 import { usePerplexity } from "@/app/context/PerplexityContext";
 
 export default function IngredientAnalysis() {
-  // Remove 'ingredients' prop
   const { ingredientFound } = usePerplexity(); // Get ingredientFound from context
 
   const [selectedIngredients, setSelectedIngredients] = useState([]);
@@ -101,7 +100,7 @@ export default function IngredientAnalysis() {
     : [];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-xl border border-gray-200 mt-8">
+    <div className="bg-white p-6 rounded-lg shadow-xl border border-gray-200">
       <h2 className="text-2xl font-bold text-indigo-950 mb-6 border-b pb-3">
         Advanced Ingredient Analysis
       </h2>
