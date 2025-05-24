@@ -21,23 +21,23 @@ export function usePerplexity() {
 export function PerplexityProvider({ children }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [aiResponse, setAiResponse] = useState("");
   const [submittedPrompt, setSubmittedPrompt] = useState("");
   const [searchHistory, setSearchHistory] = useState([]);
   const [actionableSummary, setActionableSummary] = useState(null); // Keep separate for easier access
+  const [ingredientFound, setIngredientFound] = useState([]);
 
   // --- useEffect to load data from localStorage on mount ---
   useEffect(() => {
     try {
       const storedPrompt = localStorage.getItem("submittedPrompt");
-      const storedAiResponse = localStorage.getItem("aiResponse");
+      const storedingredientFound = localStorage.getItem("ingredientFound");
       const storedActionableSummary = localStorage.getItem("actionableSummary");
 
       if (storedPrompt) {
         setSubmittedPrompt(JSON.parse(storedPrompt));
       }
-      if (storedAiResponse) {
-        setAiResponse(JSON.parse(storedAiResponse));
+      if (storedingredientFound) {
+        setingredientFound(JSON.parse(storedingredientFound));
       }
       if (storedActionableSummary) {
         setActionableSummary(JSON.parse(storedActionableSummary));
@@ -55,8 +55,8 @@ export function PerplexityProvider({ children }) {
       // Only save if there's actual data
       localStorage.setItem("submittedPrompt", JSON.stringify(submittedPrompt));
     }
-    if (aiResponse) {
-      localStorage.setItem("aiResponse", JSON.stringify(aiResponse));
+    if (ingredientFound) {
+      localStorage.setItem("ingredientFound", JSON.stringify(ingredientFound));
     }
     if (actionableSummary) {
       localStorage.setItem(
@@ -64,18 +64,18 @@ export function PerplexityProvider({ children }) {
         JSON.stringify(actionableSummary)
       );
     }
-  }, [submittedPrompt, aiResponse, actionableSummary]);
+  }, [submittedPrompt, ingredientFound, actionableSummary]);
 
   const submitPerplexityPrompt = useCallback(
     async (prompt, searchType = "finder") => {
       setLoading(true);
       setError(null);
-      setAiResponse("");
+      setIngredientFound("");
       setSubmittedPrompt(prompt);
       //console.log("prompt", prompt);
       if (searchType === "finder") {
         try {
-          const response = await fetch("/api/ingredientfinder", {
+          const response = await fetch("/api/sonar/ingredientfinder", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -95,7 +95,7 @@ export function PerplexityProvider({ children }) {
           console.log("Parsed API Response Data:", data);
 
           // Update context state with the parsed data
-          setAiResponse(data);
+          setIngredientFound(data);
 
           setSearchHistory((prevHistory) => [
             {
@@ -121,7 +121,7 @@ export function PerplexityProvider({ children }) {
   const value = {
     loading,
     error,
-    aiResponse,
+    ingredientFound,
     submittedPrompt,
     searchHistory,
     submitPerplexityPrompt,

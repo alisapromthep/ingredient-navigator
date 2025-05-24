@@ -7,8 +7,13 @@ import ReportPdf from "../components/ReportPdf/ReportPdf";
 import { themeColors } from "../../lib/themeColors"; // Adjust path as needed
 
 export default function ReportsPage() {
-  const { submittedPrompt, aiResponse, actionableSummary, loading, error } =
-    usePerplexity();
+  const {
+    submittedPrompt,
+    ingredientFound,
+    actionableSummary,
+    loading,
+    error,
+  } = usePerplexity();
 
   // State for PDF section selection
   const [selectedPdfSections, setSelectedPdfSections] = useState({
@@ -38,9 +43,9 @@ export default function ReportsPage() {
 
   const reportData = {
     submittedPrompt,
-    ingredients: aiResponse?.ingredients,
+    ingredients: ingredientFound?.ingredients,
     actionableSummary,
-    rawAiResponse: aiResponse?.rawResponse,
+    rawingredientFound: ingredientFound?.rawResponse,
   };
 
   //console.log("reportData", reportData);
@@ -51,11 +56,13 @@ export default function ReportsPage() {
       ? reportData.ingredients
       : [],
     actionableSummary: reportData.actionableSummary || {},
-    rawAiResponse: reportData.rawAiResponse || "",
+    rawingredientFound: reportData.rawingredientFound || "",
   };
   //console.log(pdfReportData);
   const hasReportData =
-    submittedPrompt || aiResponse?.ingredients?.length > 0 || actionableSummary;
+    submittedPrompt ||
+    ingredientFound?.ingredients?.length > 0 ||
+    actionableSummary;
 
   const handleSectionToggle = (sectionName) => {
     setSelectedPdfSections((prev) => ({
@@ -416,7 +423,7 @@ export default function ReportsPage() {
       )}
 
       {/* Raw AI Response - Distinct, less prominent card */}
-      {reportData.rawAiResponse && (
+      {reportData.rawingredientFound && (
         <div
           className="mt-10 p-6 rounded-lg shadow-md"
           style={{
@@ -438,7 +445,7 @@ export default function ReportsPage() {
               color: activeColors.text,
             }}
           >
-            {reportData.rawAiResponse}
+            {reportData.rawingredientFound}
           </pre>
         </div>
       )}

@@ -2,18 +2,14 @@
 
 import { useState } from "react";
 import { usePerplexity } from "@/app/context/PerplexityContext";
-import { useRouter } from "next/navigation";
-export default function IngredientFinderForm() {
-  const router = useRouter();
 
+export default function IngredientFinderForm() {
   const { submitPerplexityPrompt, loading, error } = usePerplexity();
 
   const [productCategory, setProductCategory] = useState("");
   const [productType, setProductType] = useState("");
   const [productFunction, setProductFunction] = useState("");
-  const [includeClinicalStudies, setIncludeClinicalStudies] = useState(false);
-  const [numIngredients, setNumIngredients] = useState(5);
-  const [connectToMarketTrend, setConnectToMarketTrend] = useState(true); // Default to true for market focus
+  const [numIngredients, setNumIngredients] = useState(2);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,26 +20,10 @@ export default function IngredientFinderForm() {
       prompt += ` Its primary function should be to ${productFunction}.`;
     }
 
-    if (includeClinicalStudies) {
-      prompt += ` Please include scientific evidence or mention relevant clinical studies for each ingredient's benefits.`;
-    }
-
-    if (connectToMarketTrend) {
-      prompt += `
-      Additionally, focus exclusively on ingredients that are demonstrably **gaining significant popularity or showing viral potential** across key social media platforms: **TikTok, Instagram, and YouTube**.
-      For each suggested ingredient, provide concrete evidence and analysis of its growth, including:
-      - **Engagement Metrics/Statistics:** (e.g., number of related hashtags, video views, mentions, or growth rate of content over the past 6-12 months specifically on TikTok, Instagram, and YouTube). If exact numbers aren't available, describe the observed trend (e.g., "rapid increase in user-generated content," "frequently featured by beauty influencers," "emerging as a key topic").
-      - **Trend Trajectory:** Explain *why* it's gaining popularity (e.g., efficacy, unique texture, celebrity endorsement, 'clean beauty' alignment).
-      - **Future Outlook (8-month window):** Predict its sustainability and potential for continued growth, ensuring it will still be on an upward trend when a product might launch in the next 8 months. Prioritize ingredients that offer a genuine "ahead of the curve" advantage.
-      `;
-    }
-
-    prompt += ` Explain the function and benefits of each suggested ingredient.`;
+    prompt += ` Explain the function, usages and benefits of each suggested ingredient.`;
 
     try {
       await submitPerplexityPrompt(prompt, "finder");
-
-      router.push("/reports");
     } catch (error) {
       console.error("form submission error", error);
     }
@@ -122,30 +102,13 @@ export default function IngredientFinderForm() {
         />
       </div>
 
-      {/* 4. Clinical Studies Checkbox */}
-      <div className="flex items-center">
-        <input
-          id="includeClinicalStudies"
-          type="checkbox"
-          checked={includeClinicalStudies}
-          onChange={(e) => setIncludeClinicalStudies(e.target.checked)}
-          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-        />
-        <label
-          htmlFor="includeClinicalStudies"
-          className="ml-2 block text-sm text-gray-900"
-        >
-          Include information from clinical studies
-        </label>
-      </div>
-
       {/* 5. Number of Ingredients */}
       <div>
         <label
           htmlFor="numIngredients"
           className="block text-sm font-medium text-gray-700"
         >
-          Number of Ingredients to suggest:
+          Number of Ingredients to suggest: (Maximum of 5)
         </label>
         <input
           type="number"
@@ -156,23 +119,6 @@ export default function IngredientFinderForm() {
           max="5"
           className="text-gray-700 bg-white mt-1 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md p-2"
         />
-      </div>
-
-      {/* 6. Connect to Current Market Trend/Popularity Checkbox */}
-      <div className="flex items-center">
-        <input
-          id="connectToMarketTrend"
-          type="checkbox"
-          checked={connectToMarketTrend}
-          onChange={(e) => setConnectToMarketTrend(e.target.checked)}
-          className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-        />
-        <label
-          htmlFor="connectToMarketTrend"
-          className="ml-2 block text-sm text-gray-900"
-        >
-          Connect to current market trend/popularity
-        </label>
       </div>
 
       <button

@@ -8,6 +8,8 @@ function page() {
     <div>
       <h1>Ingredient Finder</h1>
       <IngredientFinderForm />
+      {/* Initial response: Ingredient display */}
+      <div></div>
     </div>
   );
 }

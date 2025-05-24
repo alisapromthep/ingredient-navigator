@@ -244,13 +244,13 @@ const ReportPdf = ({ reportData, selectedSections, currentTheme }) => {
           )}
 
         {selectedSections.includes("rawResponse") &&
-          reportData.rawAiResponse && (
+          reportData.rawingredientFound && (
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionTitle}>
                 Raw AI Response (for Debugging)
               </Text>
               <Text style={styles.rawResponseText}>
-                {reportData.rawAiResponse}
+                {reportData.rawingredientFound}
               </Text>
             </View>
           )}
