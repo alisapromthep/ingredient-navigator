@@ -3,6 +3,7 @@
 import React from "react";
 import IngredientFinderForm from "../components/IngredientFinderForm/IngredientFinderForm";
 import { usePerplexity } from "../context/PerplexityContext";
+import IngredientAnalysis from "../components/IngredientAnalysis/IngredientAnalysis";
 
 function IngredientFinder() {
   const {
@@ -121,6 +122,9 @@ function IngredientFinder() {
                   </div>
                 );
               })}
+            </section>
+            <section>
+              <IngredientAnalysis />
             </section>
           </div>
         ) : (
