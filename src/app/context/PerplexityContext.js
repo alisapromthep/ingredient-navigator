@@ -30,29 +30,27 @@ export function PerplexityProvider({ children }) {
   useEffect(() => {
     try {
       const storedPrompt = localStorage.getItem("submittedPrompt");
-      const storedingredientFound = localStorage.getItem("ingredientFound");
+      const storedIngredientFound = localStorage.getItem("ingredientFound");
       const storedActionableSummary = localStorage.getItem("actionableSummary");
 
       if (storedPrompt) {
         setSubmittedPrompt(JSON.parse(storedPrompt));
       }
-      if (storedingredientFound) {
-        setingredientFound(JSON.parse(storedingredientFound));
+      if (storedIngredientFound) {
+        setIngredientFound(JSON.parse(storedIngredientFound));
       }
       if (storedActionableSummary) {
         setActionableSummary(JSON.parse(storedActionableSummary));
       }
     } catch (e) {
       console.error("Failed to load data from localStorage:", e);
-      // Clear localStorage if it's corrupted
       localStorage.clear();
     }
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
   // --- useEffect to save data to localStorage whenever it changes ---
   useEffect(() => {
     if (submittedPrompt) {
-      // Only save if there's actual data
       localStorage.setItem("submittedPrompt", JSON.stringify(submittedPrompt));
     }
     if (ingredientFound) {
@@ -92,10 +90,15 @@ export function PerplexityProvider({ children }) {
 
           const data = await response.json();
 
-          console.log("Parsed API Response Data:", data);
+          console.log(
+            "Parsed API Response Data:",
+            data,
+            "ingredientsData",
+            data.ingredientsData
+          );
 
           // Update context state with the parsed data
-          setIngredientFound(data);
+          setIngredientFound(data.ingredientsData);
 
           setSearchHistory((prevHistory) => [
             {
@@ -122,6 +125,7 @@ export function PerplexityProvider({ children }) {
     loading,
     error,
     ingredientFound,
+    setIngredientFound,
     submittedPrompt,
     searchHistory,
     submitPerplexityPrompt,

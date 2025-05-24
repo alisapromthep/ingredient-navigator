@@ -52,11 +52,11 @@ Each description should be as concise as possible while being informative.
 Request: "${prompt}"
 `;
 
-    let ingredientsData; // This will hold the parsed JSON array of ingredients
-    let rawIngredients;
+    let ingredientsData;
+    let rawIngredientsData;
 
     try {
-      const ingredientFound = await openai.chat.completions.create({
+      const aiResponse1 = await openai.chat.completions.create({
         model: "sonar",
         messages: [
           {
@@ -71,24 +71,24 @@ Request: "${prompt}"
         max_tokens: 500,
       });
 
-      const contentString1 = ingredientFound.choices[0]?.message?.content;
+      const rawIngredientsData = aiResponse1.choices[0]?.message?.content;
       console.log(
         "Raw JSON response from Perplexity (Ingredients):",
-        contentString1
+        rawIngredientsData
       );
       //clean up raw strings before parsing to avoid errors of incomplete strings/objects.
-      let cleanedString1 = contentString1.trim();
+      let cleanedString1 = rawIngredientsData.trim();
       if (cleanedString1.startsWith("```json")) {
-        cleanedString1 = cleanedString1.substring(7);
+        cleanedString1 = rawIngredientsData.substring(7);
       }
       if (cleanedString1.endsWith("```")) {
-        cleanedString1 = cleanedString1.substring(0, cleanedString1.length - 3);
+        cleanedString1 = rawIngredientsData.substring(
+          0,
+          rawIngredientsData.length - 3
+        );
       }
-      cleanedString1 = cleanedString1.trim();
-      ingredientsData = JSON.parse(cleanedString1);
-
-      rawIngredients = cleanedString1;
-      primaryingredientFoundText = cleanedString1;
+      cleanedString1 = rawIngredientsData.trim();
+      ingredientsData = JSON.parse(rawIngredientsData);
     } catch (parseError) {
       console.error("Error in Layer 1 (Ingredient JSON Schema):", parseError);
       return NextResponse.json(
@@ -100,7 +100,8 @@ Request: "${prompt}"
     }
 
     return NextResponse.json({
-      ingredients: ingredientsData || rawIngredients, // Structured array of ingredient objects
+      ingredientsData,
+      rawData: rawIngredientsData,
     });
   } catch (error) {
     console.error("Critical error in Perplexity API route:", error);
